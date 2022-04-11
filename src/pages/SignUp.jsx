@@ -2,28 +2,41 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Eye from "../assets/myIcons/Eye";
+import {
+	createUserWithEmailAndPassword,
+	getAuth,
+	updateProfile,
+} from "firebase/auth";
+import { db } from "../firebase.config";
 
 const SignIn = () => {
 	const navigate = useNavigate();
 	const [showPassword, setShowPassword] = useState(false);
 	const [formData, setFormData] = useState({
+		userName: "",
 		email: "",
 		password: "",
 	});
 
-	const { email, password } = formData;
-	// const formik = useFormik({
-	// 	intitialValues: {
-	// 		email: "",
-	// 		password: "",
-	// 	},
-	// 	onSubmit: (values) => {
-	// 		console.log(values);
-	// 	},
-	// });
-	const handleSubmit = (e) => {
+	const { userName, email, password } = formData;
+
+	const handleSubmit = async (e) => {
 		e.preventDefault();
-		console.log(formData);
+		try {
+			const auth = getAuth();
+			const userCredential = await createUserWithEmailAndPassword(
+				auth,
+				email,
+				password
+			);
+			const user = userCredential.user;
+			updateProfile(auth.currentUser, {
+				displayName: userName,
+			});
+			navigate("/signIn");
+		} catch (error) {
+			console.log(error);
+		}
 	};
 
 	const handleChange = (e) => {
@@ -36,25 +49,30 @@ const SignIn = () => {
 	return (
 		<div className="py-14 px-auto">
 			<header className="text-4xl text-white font-bold">
-				Sign Up in few steps!
+				Sign Up in a few steps!
 			</header>
 			<form
 				onSubmit={handleSubmit}
 				className="flex flex-col gap-5 my-7 center350 items-center">
+				<input
+					id="userName"
+					type="email"
+					name="userName"
+					aria-label="userName"
+					placeholder="Username"
+					className="input w-full bg-gray-100 text-black"
+					value={userName}
+					onChange={handleChange}
+				/>
 				<input
 					id="email"
 					type="email"
 					name="email"
 					aria-label="email"
 					className="input w-full bg-gray-100 text-black"
+					placeholder="Email"
 					value={email}
 					onChange={handleChange}
-					// onChange={(e) => {
-					// 	setFormData({
-					// 		...formData,
-					// 		email: e.target.value,
-					// 	});
-					// }}
 				/>
 				<div className="w-full relative flex items-center">
 					<div
@@ -67,24 +85,12 @@ const SignIn = () => {
 						type={showPassword ? "text" : "password"}
 						name="password"
 						className="input w-full bg-gray-100 text-black"
+						placeholder="Password"
 						value={password}
 						onChange={handleChange}
-						// onChange={(e) => {
-						// 	setFormData({
-						// 		...formData,
-						// 		password: e.target.value,
-						// 	});
-						// }}
 					/>
 				</div>
 				<div className="center350 items-center">
-					{/* <button
-						onClick={() => {
-							navigate("/signIn");
-						}}
-						className="btn btn-info">
-						Log in
-					</button> */}
 					<button
 						onClick={() => {
 							navigate("/signIn");
@@ -94,9 +100,9 @@ const SignIn = () => {
 					</button>
 				</div>
 			</form>
-			{/* <Link to="/forgotPassword">
-				<p className="text-right text-white center350">Forgot Password?</p>
-			</Link> */}
+			<Link to="/signIn">
+				<p className="text-center text-white center350">Sign In instead?</p>
+			</Link>
 		</div>
 	);
 };
