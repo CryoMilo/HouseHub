@@ -2,10 +2,15 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Eye from "../assets/myIcons/Eye";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { toast } from "react-toastify";
 
-const SignIn = () => {
+const SignIn = ({ setIsLoggedIn }) => {
 	const navigate = useNavigate();
+	const auth = getAuth();
+
 	const [showPassword, setShowPassword] = useState(false);
+	// const [isLoggedIn, setIsLoggedIn] = useState(false);
 	const [formData, setFormData] = useState({
 		email: "",
 		password: "",
@@ -21,9 +26,24 @@ const SignIn = () => {
 	// 		console.log(values);
 	// 	},
 	// });
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault();
-		console.log(formData);
+		try {
+			const userCredential = await signInWithEmailAndPassword(
+				auth,
+				email,
+				password
+			);
+			if (userCredential.user) {
+				console.log("Login successful");
+				toast.success("Login Successful");
+				setIsLoggedIn(true);
+				navigate("/");
+			}
+		} catch (error) {
+			toast.error("Invalid Credentials");
+			console.log(error.message);
+		}
 	};
 
 	const handleChange = (e) => {
@@ -78,12 +98,13 @@ const SignIn = () => {
 				<div className="center350 items-center grid grid-cols-2 gap-2">
 					<button
 						onClick={() => {
-							navigate("/signIn");
+							navigate("/profile");
 						}}
 						className="btn btn-info">
 						Log in
 					</button>
 					<button
+						type="submit"
 						onClick={() => {
 							navigate("/signUp");
 						}}

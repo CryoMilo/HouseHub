@@ -1,4 +1,3 @@
-// import { useFormik } from "formik";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Eye from "../assets/myIcons/Eye";
@@ -7,9 +6,11 @@ import {
 	getAuth,
 	updateProfile,
 } from "firebase/auth";
+import { setDoc, doc, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase.config";
+import { toast } from "react-toastify";
 
-const SignIn = () => {
+const SignUp = () => {
 	const navigate = useNavigate();
 	const [showPassword, setShowPassword] = useState(false);
 	const [formData, setFormData] = useState({
@@ -22,6 +23,7 @@ const SignIn = () => {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
+		console.log(formData);
 		try {
 			const auth = getAuth();
 			const userCredential = await createUserWithEmailAndPassword(
@@ -30,11 +32,22 @@ const SignIn = () => {
 				password
 			);
 			const user = userCredential.user;
+
 			updateProfile(auth.currentUser, {
 				displayName: userName,
 			});
+
+			// Save in Firestore db
+			const formDataCopy = { ...formData };
+			delete formDataCopy.password;
+			formDataCopy.timestamp = serverTimestamp();
+
+			await setDoc(doc(db, "users", user.uid), formDataCopy);
+			toast.success("User Successfully Created");
+
 			navigate("/signIn");
 		} catch (error) {
+			toast.error("Something went wrong! Try again");
 			console.log(error);
 		}
 	};
@@ -48,7 +61,7 @@ const SignIn = () => {
 
 	return (
 		<div className="py-14 px-auto">
-			<header className="text-4xl text-white font-bold">
+			<header className="text-4xl center-350 p-7 text-white font-bold">
 				Sign Up in a few steps!
 			</header>
 			<form
@@ -56,7 +69,7 @@ const SignIn = () => {
 				className="flex flex-col gap-5 my-7 center350 items-center">
 				<input
 					id="userName"
-					type="email"
+					type="text"
 					name="userName"
 					aria-label="userName"
 					placeholder="Username"
@@ -91,11 +104,7 @@ const SignIn = () => {
 					/>
 				</div>
 				<div className="center350 items-center">
-					<button
-						onClick={() => {
-							navigate("/signIn");
-						}}
-						className="btn btn-info w-full">
+					<button type="submit" className="btn btn-info w-full">
 						Sign Up
 					</button>
 				</div>
@@ -107,4 +116,4 @@ const SignIn = () => {
 	);
 };
 
-export default SignIn;
+export default SignUp;
