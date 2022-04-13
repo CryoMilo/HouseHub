@@ -26,20 +26,28 @@ function App() {
 						isLoggedIn === false ? (
 							<SignIn setIsLoggedIn={setIsLoggedIn} />
 						) : (
-							<Profile />
+							<Profile isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
 						)
 					}
 				/>
-				{/* <Route path="/profile" element={<Profile />} /> */}
-				<Route path="/signIn" element={<SignIn />} />
+				{/* <Route
+					path="/profile"
+					element={
+						<Profile isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
+					}
+				/> */}
+				<Route
+					path="/signIn"
+					element={<SignIn setIsLoggedIn={setIsLoggedIn} />}
+				/>
 				<Route path="/signUp" element={<SignUp />} />
 				<Route path="/forgotPassword" element={<ForgotPW />} />
 			</Routes>
 			<Navbar />
 			<ToastContainer
-				position="top-right"
-				autoClose={2000}
-				hideProgressBar={false}
+				position="top-center"
+				autoClose={500}
+				hideProgressBar={true}
 				theme="dark"
 			/>
 		</div>

@@ -6,11 +6,11 @@ import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { toast } from "react-toastify";
 
 const SignIn = ({ setIsLoggedIn }) => {
+	// const SignIn = () => {
 	const navigate = useNavigate();
 	const auth = getAuth();
 
 	const [showPassword, setShowPassword] = useState(false);
-	// const [isLoggedIn, setIsLoggedIn] = useState(false);
 	const [formData, setFormData] = useState({
 		email: "",
 		password: "",
@@ -35,10 +35,9 @@ const SignIn = ({ setIsLoggedIn }) => {
 				password
 			);
 			if (userCredential.user) {
-				console.log("Login successful");
 				toast.success("Login Successful");
 				setIsLoggedIn(true);
-				navigate("/");
+				navigate("/profile");
 			}
 		} catch (error) {
 			toast.error("Invalid Credentials");
@@ -54,7 +53,7 @@ const SignIn = ({ setIsLoggedIn }) => {
 	};
 
 	return (
-		<div className="py-14 px-auto">
+		<div className="pt-32 px-auto">
 			<header className="text-4xl text-white font-bold">Welcome Back!</header>
 			<form
 				onSubmit={handleSubmit}
@@ -96,15 +95,10 @@ const SignIn = ({ setIsLoggedIn }) => {
 					/>
 				</div>
 				<div className="center350 items-center grid grid-cols-2 gap-2">
-					<button
-						onClick={() => {
-							navigate("/profile");
-						}}
-						className="btn btn-info">
+					<button type="submit" className="btn btn-info">
 						Log in
 					</button>
 					<button
-						type="submit"
 						onClick={() => {
 							navigate("/signUp");
 						}}
