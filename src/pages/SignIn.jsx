@@ -41,7 +41,6 @@ const SignIn = ({ setIsLoggedIn }) => {
 			}
 		} catch (error) {
 			toast.error("Invalid Credentials");
-			console.log(error.message);
 		}
 	};
 
@@ -66,12 +65,6 @@ const SignIn = ({ setIsLoggedIn }) => {
 					className="input w-full bg-gray-100 text-black"
 					value={email}
 					onChange={handleChange}
-					// onChange={(e) => {
-					// 	setFormData({
-					// 		...formData,
-					// 		email: e.target.value,
-					// 	});
-					// }}
 				/>
 				<div className="w-full relative flex items-center">
 					<div
@@ -86,12 +79,6 @@ const SignIn = ({ setIsLoggedIn }) => {
 						className="input w-full bg-gray-100 text-black"
 						value={password}
 						onChange={handleChange}
-						// onChange={(e) => {
-						// 	setFormData({
-						// 		...formData,
-						// 		password: e.target.value,
-						// 	});
-						// }}
 					/>
 				</div>
 				<div className="center350 items-center grid grid-cols-2 gap-2">

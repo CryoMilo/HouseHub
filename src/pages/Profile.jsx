@@ -1,38 +1,65 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useState, useEffect, useRef } from "react";
-import { getAuth, updateProfile } from "firebase/auth";
-import { updateDoc } from "firebase/firestore";
+import React, { useState } from "react";
+import { getAuth, updateProfile, updateEmail } from "firebase/auth";
+import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase.config";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { async } from "@firebase/util";
 
-const Profile = ({ isLoggedIn, setIsLoggedIn }) => {
+const Profile = ({ setIsLoggedIn }) => {
 	const auth = getAuth();
 	const navigate = useNavigate();
 	const [editing, setEditing] = useState(false);
 
-	const [formData, setFormData] = useState(null);
-	useEffect(() => {
-		if (isLoggedIn === false) {
-			setFormData({
-				name: auth.currentUser.displayName,
-				email: auth.currentUser.email,
-			});
-		} else {
-			setFormData(null);
-		}
-	}, []);
+	const [formData, setFormData] = useState({
+		name: auth.currentUser.displayName,
+		email: auth.currentUser.email,
+	});
 
 	const handleEditProfile = () => {
-		console.log("Change Trigger");
 		setEditing(true);
 	};
 
-	const saveChanges = (e) => {
+	const handleEditChange = (e) => {
+		setFormData((prevState) => ({
+			...prevState,
+			[e.target.id]: e.target.value,
+		}));
+	};
+
+	const saveChanges = async (e) => {
 		e.preventDefault();
-		setEditing(false);
-		toast.success("Saved Changes");
+		try {
+			if (
+				auth.currentUser.displayName !== formData.name ||
+				auth.currentUser.email !== formData.email
+			) {
+				// Update display name in firebase
+				// Change display name for authentication
+				await updateProfile(auth.currentUser, {
+					displayName: formData.name,
+				});
+
+				// Update email in authentication
+				await updateEmail(auth.currentUser, formData.email);
+
+				// Update both in firebase for saving purpose
+				const userRef = doc(db, "users", auth.currentUser.uid);
+				await updateDoc(userRef, {
+					userName: formData.name,
+					email: formData.email,
+				});
+				setEditing(false);
+				toast.success("Saved Changes");
+			} else {
+				setEditing(false);
+				toast.info("Nothing to save");
+			}
+		} catch (error) {
+			toast.error(error.message);
+		}
 	};
 
 	const handleLogOut = () => {
@@ -72,7 +99,7 @@ const Profile = ({ isLoggedIn, setIsLoggedIn }) => {
 				<div class="avatar">
 					<div class="w-48 mask mask-squircle">
 						<img
-							src="https://api.lorem.space/image/face?hash=47"
+							src="https://api.lorem.space/image/face?hash=470"
 							alt="avatar"
 						/>
 					</div>
@@ -84,28 +111,34 @@ const Profile = ({ isLoggedIn, setIsLoggedIn }) => {
 						<h2 className="text-3xl pr-11">Username</h2>
 						{editing ? (
 							<input
+								name="name"
+								id="name"
 								type="text"
 								autoFocus
 								className="bg-transparent caret-yellow-400 w-[23rem] text-2xl text-white outline-none"
-								placeholder={auth.currentUser.displayName}
+								placeholder={formData.name}
+								value={formData.name}
+								onChange={handleEditChange}
 							/>
 						) : (
-							<h2 className="text-3xl text-white">
-								{auth.currentUser.displayName}
-							</h2>
+							<h2 className="text-3xl text-white">{formData.name}</h2>
 						)}
 					</div>
 					<div className="flex text-left">
 						<h2 className="text-3xl pr-11">Email</h2>
 						{editing ? (
 							<input
-								type="text"
+								name="email"
+								id="email"
+								type="email"
 								className="bg-transparent caret-yellow-400 w-[23rem] text-2xl text-white ml-[4rem] outline-none"
-								placeholder={auth.currentUser.email}
+								placeholder={formData.email}
+								value={formData.email}
+								onChange={handleEditChange}
 							/>
 						) : (
 							<h2 className="text-3xl text-white pl-[4rem]">
-								{auth.currentUser.email}
+								{formData.email}
 							</h2>
 						)}
 					</div>
@@ -117,6 +150,10 @@ const Profile = ({ isLoggedIn, setIsLoggedIn }) => {
 							<button
 								onClick={() => {
 									setEditing(false);
+									setFormData({
+										name: auth.currentUser.displayName,
+										email: auth.currentUser.email,
+									});
 								}}
 								className="btn btn-error w-32">
 								Cancel
