@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable jsx-a11y/anchor-is-valid */
+import React, { useState, useEffect, useRef } from "react";
 import { getAuth, updateProfile } from "firebase/auth";
 import { updateDoc } from "firebase/firestore";
 import { db } from "../firebase.config";
@@ -8,7 +10,6 @@ import { toast } from "react-toastify";
 const Profile = ({ isLoggedIn, setIsLoggedIn }) => {
 	const auth = getAuth();
 	const navigate = useNavigate();
-
 	const [editing, setEditing] = useState(false);
 
 	const [formData, setFormData] = useState(null);
@@ -28,7 +29,8 @@ const Profile = ({ isLoggedIn, setIsLoggedIn }) => {
 		setEditing(true);
 	};
 
-	const saveChanges = () => {
+	const saveChanges = (e) => {
+		e.preventDefault();
 		setEditing(false);
 		toast.success("Saved Changes");
 	};
@@ -46,11 +48,6 @@ const Profile = ({ isLoggedIn, setIsLoggedIn }) => {
 
 	return (
 		<div>
-			{/* {formData ? (
-				<h1 className="text-6xl relative top-8 text-white">{formData.name}</h1>
-			) : (
-				<h1>"User Not Logged In"</h1>
-			)} */}
 			<div className="flex justify-between items-center">
 				<h3 className="text-left text-4xl p-8 text-white">User Profile</h3>
 				<div className="dropdown dropdown-end m-8">
@@ -59,8 +56,10 @@ const Profile = ({ isLoggedIn, setIsLoggedIn }) => {
 						className="btn btn-circle p-3 bg-amber-300 text-black hover:bg-amber-100">
 						{auth.currentUser.displayName[0]}
 					</label>
-					<ul tabIndex="0" className="dropdown-content menu w-auto">
-						<li onClick={handleEditProfile} className="w-28">
+					<ul
+						tabIndex="0"
+						className="dropdown-content menu w-auto bg-slate-300 text-black rounded-l-md rounded-br-md">
+						<li onClick={handleEditProfile} className="w-max">
 							<a>Edit Profile</a>
 						</li>
 						<li onClick={handleLogOut}>
@@ -78,22 +77,41 @@ const Profile = ({ isLoggedIn, setIsLoggedIn }) => {
 						/>
 					</div>
 				</div>
-				<div className="flex flex-col gap-6 mt-8">
+
+				{/* Profile Form */}
+				<form className="flex flex-col gap-6 mt-8" onSubmit={saveChanges}>
 					<div className="flex text-left">
 						<h2 className="text-3xl pr-11">Username</h2>
-						<h2 className="text-3xl text-white">
-							{auth.currentUser.displayName}
-						</h2>
+						{editing ? (
+							<input
+								type="text"
+								autoFocus
+								className="bg-transparent caret-yellow-400 w-[23rem] text-2xl text-white outline-none"
+								placeholder={auth.currentUser.displayName}
+							/>
+						) : (
+							<h2 className="text-3xl text-white">
+								{auth.currentUser.displayName}
+							</h2>
+						)}
 					</div>
 					<div className="flex text-left">
 						<h2 className="text-3xl pr-11">Email</h2>
-						<h2 className="text-3xl text-white pl-[4rem]">
-							{auth.currentUser.email}
-						</h2>
+						{editing ? (
+							<input
+								type="text"
+								className="bg-transparent caret-yellow-400 w-[23rem] text-2xl text-white ml-[4rem] outline-none"
+								placeholder={auth.currentUser.email}
+							/>
+						) : (
+							<h2 className="text-3xl text-white pl-[4rem]">
+								{auth.currentUser.email}
+							</h2>
+						)}
 					</div>
 					{editing ? (
 						<div className="flex justify-center gap-6 pt-10">
-							<button onClick={saveChanges} className="btn btn-success w-32">
+							<button type="submit" className="btn btn-success w-32">
 								Save
 							</button>
 							<button
@@ -105,7 +123,7 @@ const Profile = ({ isLoggedIn, setIsLoggedIn }) => {
 							</button>
 						</div>
 					) : null}
-				</div>
+				</form>
 			</div>
 		</div>
 	);
