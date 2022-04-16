@@ -23,7 +23,6 @@ const SignUp = () => {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		console.log(formData);
 		try {
 			const auth = getAuth();
 			const userCredential = await createUserWithEmailAndPassword(
@@ -48,7 +47,6 @@ const SignUp = () => {
 			navigate("/signIn");
 		} catch (error) {
 			toast.error("Something went wrong! Try again");
-			console.log(error);
 		}
 	};
 

@@ -6,7 +6,6 @@ import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase.config";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { async } from "@firebase/util";
 
 const Profile = ({ setIsLoggedIn }) => {
 	const auth = getAuth();
@@ -96,8 +95,8 @@ const Profile = ({ setIsLoggedIn }) => {
 				</div>
 			</div>
 			<div className="mx-28 my-8 ">
-				<div class="avatar">
-					<div class="w-48 mask mask-squircle">
+				<div className="avatar">
+					<div className="w-48 mask mask-squircle">
 						<img
 							src="https://api.lorem.space/image/face?hash=470"
 							alt="avatar"

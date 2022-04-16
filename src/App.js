@@ -11,6 +11,7 @@ import "./styles/index.css";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import PrivateRoute from "./components/PrivateRoute";
 
 function App() {
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -20,22 +21,22 @@ function App() {
 			<Routes>
 				<Route path="/" element={<Explore />} />
 				<Route path="/offers" element={<Offers />} />
-				<Route
+				{/* <Route
 					path="/profile"
 					element={
 						isLoggedIn === false ? (
 							<SignIn setIsLoggedIn={setIsLoggedIn} />
 						) : (
-							<Profile isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
+							<Profile setIsLoggedIn={setIsLoggedIn} />
 						)
 					}
-				/>
-				{/* <Route
-					path="/profile"
-					element={
-						<Profile isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
-					}
 				/> */}
+				<Route path="/profile" element={<PrivateRoute />}>
+					<Route
+						path="/profile"
+						element={<Profile setIsLoggedIn={setIsLoggedIn} />}
+					/>
+				</Route>
 				<Route
 					path="/signIn"
 					element={<SignIn setIsLoggedIn={setIsLoggedIn} />}
