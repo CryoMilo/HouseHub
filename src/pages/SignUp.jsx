@@ -9,6 +9,7 @@ import {
 import { setDoc, doc, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase.config";
 import { toast } from "react-toastify";
+import OAuth from "../components/OAuth";
 
 const SignUp = () => {
 	const navigate = useNavigate();
@@ -110,6 +111,7 @@ const SignUp = () => {
 			<Link to="/signIn">
 				<p className="text-center text-white center350">Sign In instead?</p>
 			</Link>
+			<OAuth />
 		</div>
 	);
 };

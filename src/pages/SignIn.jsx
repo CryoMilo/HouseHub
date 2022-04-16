@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Eye from "../assets/myIcons/Eye";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { toast } from "react-toastify";
+import OAuth from "../components/OAuth";
 
 const SignIn = ({ setIsLoggedIn }) => {
 	// const SignIn = () => {
@@ -97,6 +98,9 @@ const SignIn = ({ setIsLoggedIn }) => {
 			<Link to="/forgotPassword">
 				<p className="text-right text-white center350">Forgot Password?</p>
 			</Link>
+			<div className="center350 mt-7">
+				<OAuth />
+			</div>
 		</div>
 	);
 };
