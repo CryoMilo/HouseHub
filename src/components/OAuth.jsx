@@ -84,7 +84,7 @@ const OAuth = () => {
 
 	return (
 		<div className="flex gap-3 justify-center items-center mt-14">
-			<h3 className="text-left text-2xl text-white my-5">
+			<h3 className="text-left text-2xl text-primary my-5">
 				<p>Sign {location.pathname === "/signIn" ? "in" : "up"} with</p>
 			</h3>
 			<button className="bg-white rounded-full" onClick={onGoogleLogin}>

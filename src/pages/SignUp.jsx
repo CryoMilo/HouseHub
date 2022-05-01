@@ -60,7 +60,7 @@ const SignUp = () => {
 
 	return (
 		<div className="py-14 px-auto">
-			<header className="text-4xl center-350 p-7 text-white font-bold">
+			<header className="text-4xl center-350 p-7 text-info font-bold">
 				Sign Up in a few steps!
 			</header>
 			<form
@@ -109,7 +109,7 @@ const SignUp = () => {
 				</div>
 			</form>
 			<Link to="/signIn">
-				<p className="text-center text-white center350">Sign In instead?</p>
+				<p className="text-center text-primary center350">Sign In instead?</p>
 			</Link>
 			<OAuth />
 		</div>

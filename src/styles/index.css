@@ -9,12 +9,12 @@
 }
 
 @layer components {
-	.bottom-nav {
-		@apply mx-auto my-5 w-full text-center md:w-4/5 lg:w-5/6 bottom-0 fixed;
-	}
-
 	.app {
 		@apply w-full text-center md:w-4/5 lg:w-5/6 h-screen mx-auto my-0;
+	}
+
+	.bottom-nav {
+		@apply mx-auto my-5 w-full text-center md:w-4/5 lg:w-5/6 bottom-0 fixed;
 	}
 
 	.signInForm {
@@ -24,4 +24,32 @@
 	.center350 {
 		@apply w-[350px] mx-auto;
 	}
+
+	.pageHeader {
+		@apply text-left text-4xl p-4;
+	}
+
+	.pageSubHeader {
+		@apply text-center text-2xl p-5;
+	}
+}
+
+/*Discount Strike Through */
+.strikethrough {
+	position: relative;
+}
+.strikethrough:before {
+	position: absolute;
+	content: "";
+	left: 0;
+	top: 50%;
+	right: 0;
+	border-top: 1px solid;
+	border-color: red;
+
+	-webkit-transform: rotate(-5deg);
+	-moz-transform: rotate(-5deg);
+	-ms-transform: rotate(-5deg);
+	-o-transform: rotate(-5deg);
+	transform: rotate(-5deg);
 }

@@ -12,6 +12,8 @@ import "./styles/index.css";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import PrivateRoute from "./components/PrivateRoute";
+import NotFound from "./pages/NotFound";
+import Category from "./pages/Category";
 
 function App() {
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -41,8 +43,10 @@ function App() {
 					path="/signIn"
 					element={<SignIn setIsLoggedIn={setIsLoggedIn} />}
 				/>
+				<Route path="/category/:categoryName" element={<Category />} />
 				<Route path="/signUp" element={<SignUp />} />
 				<Route path="/forgotPassword" element={<ForgotPW />} />
+				<Route path="/*" element={<NotFound />} />
 			</Routes>
 			<Navbar />
 			<ToastContainer

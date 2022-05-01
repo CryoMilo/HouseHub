@@ -54,7 +54,7 @@ const SignIn = ({ setIsLoggedIn }) => {
 
 	return (
 		<div className="pt-32 px-auto">
-			<header className="text-4xl text-white font-bold">Welcome Back!</header>
+			<header className="text-4xl text-info font-bold">Welcome!</header>
 			<form
 				onSubmit={handleSubmit}
 				className="flex flex-col gap-5 my-7 center350 items-center">
@@ -96,7 +96,7 @@ const SignIn = ({ setIsLoggedIn }) => {
 				</div>
 			</form>
 			<Link to="/forgotPassword">
-				<p className="text-right text-white center350">Forgot Password?</p>
+				<p className="text-right text-primary center350">Forgot Password?</p>
 			</Link>
 			<div className="center350 mt-7">
 				<OAuth />

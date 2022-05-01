@@ -8,10 +8,15 @@ import {
 	limit,
 } from "firebase/firestore";
 import { db } from "../firebase.config";
+import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import LoadingSpinner from "../components/LoadingSpinner";
 import ListingCard from "../components/ListingCard";
-const Offers = () => {
+
+const Category = () => {
+	const param = useParams();
+	const { categoryName } = param;
+
 	const [listings, setListings] = useState([]);
 	const [loading, setLoading] = useState(true);
 
@@ -19,7 +24,7 @@ const Offers = () => {
 		try {
 			const q = query(
 				collection(db, "listings"),
-				where("offer", "==", true),
+				where("type", "==", categoryName),
 				orderBy("timestamp", "desc"),
 				limit(10)
 			);
@@ -37,18 +42,19 @@ const Offers = () => {
 			setLoading(false);
 		} catch (error) {
 			toast.error("Error fetching data");
-			setLoading(false);
 		}
 	};
 
 	useEffect(() => {
 		fetchListings();
-	}, []);
+	}, [categoryName]);
 
 	return (
 		<div>
 			<header>
-				<h3>Current Offers</h3>
+				<h3>
+					{categoryName === "rent" ? "Places for Rent" : "Places for Sale"}
+				</h3>
 			</header>
 			{loading ? (
 				<LoadingSpinner />
@@ -61,10 +67,10 @@ const Offers = () => {
 					</ul>
 				</>
 			) : (
-				<p>There are no current offers for now. Please comeback later😉</p>
+				<p>No Listings for {categoryName}</p>
 			)}
 		</div>
 	);
 };
 
-export default Offers;
+export default Category;

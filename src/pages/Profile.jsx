@@ -75,7 +75,7 @@ const Profile = ({ setIsLoggedIn }) => {
 	return (
 		<div>
 			<div className="flex justify-between items-center">
-				<h3 className="text-left text-4xl p-8 text-white">User Profile</h3>
+				<h3 className="pageHeader">User Profile</h3>
 				<div className="dropdown dropdown-end m-8">
 					<label
 						tabIndex="0"
@@ -94,7 +94,7 @@ const Profile = ({ setIsLoggedIn }) => {
 					</ul>
 				</div>
 			</div>
-			<div className="mx-28 my-8 ">
+			<div className="m-3">
 				<div className="avatar">
 					<div className="w-48 mask mask-squircle">
 						<img
@@ -107,36 +107,36 @@ const Profile = ({ setIsLoggedIn }) => {
 				{/* Profile Form */}
 				<form className="flex flex-col gap-6 mt-8" onSubmit={saveChanges}>
 					<div className="flex text-left">
-						<h2 className="text-3xl pr-11">Username</h2>
+						<h2 className="text-3xl pr-11 pl-4">Username</h2>
 						{editing ? (
 							<input
 								name="name"
 								id="name"
 								type="text"
 								autoFocus
-								className="bg-transparent caret-yellow-400 w-[23rem] text-2xl text-white outline-none"
+								className="bg-transparent caret-yellow-400 w-[8rem] text-2xl text-secondary outline-none"
 								placeholder={formData.name}
 								value={formData.name}
 								onChange={handleEditChange}
 							/>
 						) : (
-							<h2 className="text-3xl text-white">{formData.name}</h2>
+							<h2 className="text-3xl text-primary">{formData.name}</h2>
 						)}
 					</div>
 					<div className="flex text-left">
-						<h2 className="text-3xl pr-11">Email</h2>
+						<h2 className="text-3xl pr-11 pl-4">Email</h2>
 						{editing ? (
 							<input
 								name="email"
 								id="email"
 								type="email"
-								className="bg-transparent caret-yellow-400 w-[23rem] text-2xl text-white ml-[4rem] outline-none"
+								className="bg-transparent caret-yellow-400 w-[23rem] text-2xl pl-[2.3rem] text-secondary outline-none"
 								placeholder={formData.email}
 								value={formData.email}
 								onChange={handleEditChange}
 							/>
 						) : (
-							<h2 className="text-3xl text-white pl-[4rem]">
+							<h2 className="text-3xl text-primary pl-[2.3rem]">
 								{formData.email}
 							</h2>
 						)}
