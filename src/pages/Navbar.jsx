@@ -1,5 +1,3 @@
-import { info } from "daisyui/src/colors";
-import { error } from "daisyui/src/colors/colorNames";
 import React from "react";
 import { Link } from "react-router-dom";
 import { ReactComponent as ExploreIcon } from "../assets/svg/exploreIcon.svg";

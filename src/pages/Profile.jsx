@@ -4,8 +4,9 @@ import React, { useState } from "react";
 import { getAuth, updateProfile, updateEmail } from "firebase/auth";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase.config";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import ArrowRight from "../assets/myIcons/ArrowRight";
 
 const Profile = ({ setIsLoggedIn }) => {
 	const auth = getAuth();
@@ -141,6 +142,12 @@ const Profile = ({ setIsLoggedIn }) => {
 							</h2>
 						)}
 					</div>
+					<Link
+						to="/createListing"
+						className="flex justify-start gap-2 items-center">
+						<h2 className="pl-4">Sell your property</h2>
+						<ArrowRight />
+					</Link>
 					{editing ? (
 						<div className="flex justify-center gap-6 pt-10">
 							<button type="submit" className="btn btn-success w-32">

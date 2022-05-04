@@ -4,7 +4,7 @@ import React from "react";
 
 const LoadingSpinner = () => {
 	return (
-		<div className="lds-roller">
+		<div className="lds-roller text-red-500">
 			<div></div>
 			<div></div>
 			<div></div>

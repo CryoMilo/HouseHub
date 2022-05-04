@@ -11,6 +11,8 @@ import { db } from "../firebase.config";
 import { toast } from "react-toastify";
 import LoadingSpinner from "../components/LoadingSpinner";
 import ListingCard from "../components/ListingCard";
+import "../styles/index.css";
+
 const Offers = () => {
 	const [listings, setListings] = useState([]);
 	const [loading, setLoading] = useState(true);
@@ -51,7 +53,9 @@ const Offers = () => {
 				<h3>Current Offers</h3>
 			</header>
 			{loading ? (
-				<LoadingSpinner />
+				<div className="loading">
+					<LoadingSpinner />
+				</div>
 			) : listings && listings.length > 0 ? (
 				<>
 					<ul>
