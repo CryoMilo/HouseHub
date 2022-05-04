@@ -21,19 +21,21 @@ const ListingCard = ({ listingData }) => {
 								Price - THB {listingData.regularPrice}
 							</h3>
 							{listingData.offer ? (
-								<h3 className="text-4xl">
-									Price - THB {listingData.discountedPrice}
+								<h3 className="text-4xl pl-20">
+									THB {listingData.discountedPrice}
 								</h3>
 							) : null}
 						</div>
 					</div>
-					<p className="text-left">Location - {listingData.location}</p>
+					<p className="text-left">
+						Location - <span>{listingData.location}</span>
+					</p>
 					<div class="card-actions justify-between">
-						<div className="flex gap-4">
+						<div className="flex gap-4 items-center">
 							<h3 className="text-4xl">🛌🏽 {listingData.bedrooms}</h3>
 							<h3 className="text-4xl">🚽 {listingData.bathrooms}</h3>
 							<h3 className="text-4xl">
-								{listingData.furnished ? "💒Furnished" : ""}
+								🪑 <span className="text-3xl">{listingData.furnished}</span>
 							</h3>
 						</div>
 						<button class="btn btn-primary">Learn More</button>

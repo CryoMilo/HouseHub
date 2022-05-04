@@ -14,7 +14,7 @@
 	}
 
 	.bottom-nav {
-		@apply mx-auto my-5 w-full text-center md:w-4/5 lg:w-5/6 bottom-0 fixed;
+		@apply mx-auto w-full text-center md:w-4/5 lg:w-5/6 bottom-0 fixed bg-base-100 border-t-2 border-t-slate-300 py-2;
 	}
 
 	.signInForm {
