@@ -50,7 +50,7 @@ const Offers = () => {
 	return (
 		<div>
 			<header>
-				<h3>Current Offers</h3>
+				<h3 className="pageHeader">Current Offers</h3>
 			</header>
 			{loading ? (
 				<div className="loading">
@@ -65,7 +65,9 @@ const Offers = () => {
 					</ul>
 				</>
 			) : (
-				<p>There are no current offers for now. Please comeback later😉</p>
+				<p className="centerAtViewPort text-2xl">
+					There are no current offers. Please comeback later😉
+				</p>
 			)}
 		</div>
 	);

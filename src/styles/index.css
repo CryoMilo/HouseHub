@@ -26,7 +26,7 @@
 	}
 
 	.pageHeader {
-		@apply text-left text-4xl p-4;
+		@apply text-left text-4xl p-4 font-extrabold;
 	}
 
 	.pageSubHeader {
@@ -52,4 +52,15 @@
 	-ms-transform: rotate(-5deg);
 	-o-transform: rotate(-5deg);
 	transform: rotate(-5deg);
+}
+
+.centerAtViewPort {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.input-box-radius {
+	border-radius: 0 !important;
 }

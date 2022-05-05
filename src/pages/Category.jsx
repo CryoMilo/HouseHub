@@ -52,7 +52,7 @@ const Category = () => {
 	return (
 		<div className="mb-32">
 			<header>
-				<h3>
+				<h3 className="pageHeader">
 					{categoryName === "rent" ? "Places for Rent" : "Places for Sale"}
 				</h3>
 			</header>
