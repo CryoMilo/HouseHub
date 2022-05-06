@@ -1,12 +1,25 @@
+/* eslint-disable default-case */
 /* eslint-disable array-callback-return */
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import React, { useState } from "react";
+import {
+	getDownloadURL,
+	getStorage,
+	ref,
+	uploadBytesResumable,
+} from "firebase/storage";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { v4 as uuidv4 } from "uuid";
+import { faker } from "@faker-js/faker";
+
 // import { toast } from "react-toastify";
 
 const CreateListing = () => {
 	const auth = getAuth();
 	const navigate = useNavigate();
+	const storage = getStorage();
+	const isMounted = useRef(true);
 
 	const [type, setType] = useState("Sell");
 	const [offerOn, setOfferOn] = useState(false);
@@ -17,23 +30,104 @@ const CreateListing = () => {
 		furnished: "",
 		name: "",
 		location: "",
+		latitude: "",
+		longitude: "",
 		offer: false,
 		parking: true,
+		imageURL: [],
 		regularPrice: 0,
 		discountedPrice: 0,
 		type: "Sell",
 	});
 
+	useEffect(() => {
+		// Attach Current UserId to the form
+		if (isMounted) {
+			onAuthStateChanged(auth, (user) => {
+				if (user) {
+					setFormData({ ...formData, userRef: user.uid });
+				} else {
+					navigate("/signIn");
+				}
+			});
+		}
+
+		return () => {
+			isMounted.current = false;
+		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [isMounted]);
+
+	const uploadImages = async (image) => {
+		const fileName = `${auth.currentUser.uid}-${image.name}-${uuidv4()}`;
+		if (formData.imageURL.length === 0) return;
+		const storageRef = ref(storage, `propertyImages/${fileName}`);
+
+		const uploadTask = uploadBytesResumable(storageRef, image);
+
+		uploadTask.on(
+			"state_changed",
+			(snapshot) => {
+				const progress =
+					(snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+				console.log("Upload is " + progress + "% done");
+				switch (snapshot.state) {
+					case "paused":
+						console.log("Upload is paused");
+						break;
+					case "running":
+						console.log("Upload is running");
+						break;
+				}
+			},
+			(error) => {
+				switch (error.code) {
+					case "storage/unauthorized":
+						// User doesn't have permission to access the object
+						toast.error("Please Login First");
+						break;
+					case "storage/canceled":
+						toast.error("Upload Cancelled");
+						break;
+					case "storage/unknown":
+						toast.error("Path Error");
+						break;
+				}
+			},
+			() => {
+				// Upload completed successfully, now we can get the download URL
+				getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+					console.log(downloadURL);
+				});
+			}
+		);
+	};
+
 	const handleChange = (e) => {
-		setFormData((prevState) => ({
-			...prevState,
-			[e.target.id]: e.target.value,
-		}));
+		if (e.target.name === "image") {
+			setFormData((prevState) => ({
+				...prevState,
+				imageURL: e.target.files,
+			}));
+		} else {
+			setFormData((prevState) => ({
+				...prevState,
+				[e.target.id]: e.target.value,
+			}));
+		}
 	};
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		console.log(formData);
+		if (formData.imageURL.length > 6) {
+			toast.error("Max 6 Images");
+		}
+		setFormData({
+			...formData,
+			latitude: faker.address.latitude(90, -90, 4),
+			longitude: faker.address.longitude(90, -90, 4),
+		});
+		uploadImages(formData.imageURL);
 	};
 
 	return (
@@ -76,7 +170,7 @@ const CreateListing = () => {
 					</div>
 					<div className="flex flex-col gap-4">
 						<label className="input-group input-group-lg">
-							<span className="bg-secondary rounded-none w-40">Name</span>
+							<span className="bg-secondary rounded-none w-[200px]">Name</span>
 							<input
 								type="text"
 								name="name"
@@ -86,7 +180,9 @@ const CreateListing = () => {
 							/>
 						</label>
 						<label className="input-group input-group-lg">
-							<span className="bg-secondary rounded-none w-40">Location</span>
+							<span className="bg-secondary rounded-none w-[200px]">
+								Location
+							</span>
 							<input
 								name="location"
 								id="location"
@@ -96,7 +192,9 @@ const CreateListing = () => {
 							/>
 						</label>
 						<label className="input-group input-group-lg">
-							<span className="bg-secondary rounded-none w-40">Bedroom</span>
+							<span className="bg-secondary rounded-none w-[200px]">
+								Bedroom
+							</span>
 							<input
 								type="number"
 								name="bedroom"
@@ -106,7 +204,9 @@ const CreateListing = () => {
 							/>
 						</label>
 						<label className="input-group input-group-lg">
-							<span className="bg-secondary rounded-none w-40">Bathroom</span>
+							<span className="bg-secondary rounded-none w-[200px]">
+								Bathroom
+							</span>
 							<input
 								type="number"
 								name="bathroom"
@@ -116,7 +216,9 @@ const CreateListing = () => {
 							/>
 						</label>
 						<label className="input-group input-group-lg">
-							<span className="bg-secondary rounded-none w-40">Furnished</span>
+							<span className="bg-secondary rounded-none w-[200px]">
+								Furnished
+							</span>
 							<select
 								name="furnished"
 								id="furnished"
@@ -127,8 +229,11 @@ const CreateListing = () => {
 								<option value="Not-Furnished">Not-Furnished</option>
 							</select>
 						</label>
+						{/* PARKING */}
 						<label className="input-group input-group-lg">
-							<span className="bg-secondary rounded-none w-32">Parking</span>
+							<span className="bg-secondary rounded-none w-[150px]">
+								Parking
+							</span>
 							<div className="flex gap-5">
 								<div className=" border-l-8 border-black">
 									<label className="inline-flex items-center ml-6">
@@ -164,8 +269,9 @@ const CreateListing = () => {
 								</div>
 							</div>
 						</label>
+						{/* PRICE */}
 						<label className="input-group input-group-lg">
-							<span className="bg-secondary rounded-none w-40">Price</span>
+							<span className="bg-secondary rounded-none w-[200px]">Price</span>
 							<div className="w-full text-left">
 								<input
 									type="number"
@@ -180,7 +286,20 @@ const CreateListing = () => {
 							</div>
 						</label>
 						<label className="input-group input-group-lg">
-							<span className="bg-secondary rounded-none w-32">Offer</span>
+							<span className="bg-secondary rounded-none w-[200px]">Image</span>
+							<input
+								type="file"
+								name="image"
+								id="image"
+								onChange={handleChange}
+								multiple
+								className="w-full border-l-8 border-black rounded-md"
+								accept=".jpeg,.png,.jpg"
+							/>
+						</label>
+						{/* OFFER */}
+						<label className="input-group input-group-lg">
+							<span className="bg-secondary rounded-none w-[150px]">Offer</span>
 							<div className="flex gap-5">
 								<div className=" border-l-8 border-black">
 									<label className="inline-flex items-center ml-6">
@@ -216,31 +335,63 @@ const CreateListing = () => {
 								</div>
 							</div>
 						</label>
+						{/* DISCOUNT */}
 						{offerOn ? (
-							<label className="input-group input-group-lg">
-								<span className="bg-secondary rounded-none w-40">Discount</span>
-								<div className="w-full text-left">
-									<input
-										type="number"
-										name="discount"
-										id="discount"
-										onChange={(e) => {
-											setFormData({
-												...formData,
-												discountedPrice:
-													formData.regularPrice -
-													formData.regularPrice * (e.target.value / 100),
-											});
-										}}
-										className="input input-bordered input-box-radius border-x-8 border-black bg-white"
-									/>
-									<span className="inline pl-2 bg-transparent">%</span>
-								</div>
-							</label>
+							<div>
+								<label className="input-group input-group-lg">
+									<span className="bg-secondary rounded-none w-[200px]">
+										Discount
+									</span>
+									<div className="w-full text-left">
+										<input
+											type="number"
+											name="discount"
+											id="discount"
+											onChange={(e) => {
+												setFormData({
+													...formData,
+													discountedPrice:
+														formData.regularPrice -
+														formData.regularPrice * (e.target.value / 100),
+												});
+											}}
+											className="input input-bordered input-box-radius border-x-8 border-black bg-white"
+										/>
+										<span className="inline pl-2 bg-transparent">%</span>
+									</div>
+								</label>
+								<label className="input-group input-group-lg mt-4">
+									<span className="bg-secondary rounded-none w-[200px]">
+										Discounted
+									</span>
+									<div className="w-full text-left">
+										<input
+											type="number"
+											name="discountedPrice"
+											id="discountedPrice"
+											onChange={handleChange}
+											value={formData.discountedPrice}
+											className="input input-bordered input-box-radius border-x-8 border-black bg-white"
+										/>
+										<span className="inline pl-2 bg-transparent">
+											{type === "Rent" ? "THB/month" : "THB"}
+										</span>
+									</div>
+								</label>
+							</div>
 						) : null}
 					</div>
-					<button type="submit" className="mt-8 text-4xl">
-						Post
+					{/* BUTTONS */}
+					<button type="submit" className="mt-8 text-4xl mr-4">
+						POST
+					</button>
+					<button
+						type="button"
+						className="mt-8 text-4xl ml-4"
+						onClick={() => {
+							navigate("/profile");
+						}}>
+						CANCEL
 					</button>
 				</form>
 			</div>
