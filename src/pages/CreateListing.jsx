@@ -23,6 +23,8 @@ const CreateListing = () => {
 
 	const [type, setType] = useState("Sell");
 	const [offerOn, setOfferOn] = useState(false);
+	const [imgUploaded, setImgUploaded] = useState(false);
+	let imgLinkList = [];
 
 	const [formData, setFormData] = useState({
 		bathroom: 0,
@@ -58,56 +60,70 @@ const CreateListing = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isMounted]);
 
-	const uploadImages = async (image) => {
-		const fileName = `${auth.currentUser.uid}-${image.name}-${uuidv4()}`;
-		if (formData.imageURL.length === 0) return;
-		const storageRef = ref(storage, `propertyImages/${fileName}`);
+	const uploadImages = () => {
+		formData.imageURL.map((image) => {
+			const fileName = `${auth.currentUser.uid}-${image.name}-${uuidv4()}`;
+			if (formData.imageURL.length === 0) return;
+			const storageRef = ref(storage, `propertyImages/${fileName}`);
 
-		const uploadTask = uploadBytesResumable(storageRef, image);
-
-		uploadTask.on(
-			"state_changed",
-			(snapshot) => {
-				const progress =
-					(snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-				console.log("Upload is " + progress + "% done");
-				switch (snapshot.state) {
-					case "paused":
-						console.log("Upload is paused");
-						break;
-					case "running":
-						console.log("Upload is running");
-						break;
+			const uploadTask = uploadBytesResumable(storageRef, image);
+			uploadTask.on(
+				"state_changed",
+				(snapshot) => {
+					const progress =
+						(snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+					console.log("Upload is " + progress + "% done");
+					switch (snapshot.state) {
+						case "paused":
+							console.log("Upload is paused");
+							break;
+						case "running":
+							console.log("Upload is running");
+							break;
+					}
+				},
+				(error) => {
+					switch (error.code) {
+						case "storage/unauthorized":
+							// User doesn't have permission to access the object
+							toast.error("Please Login First");
+							break;
+						case "storage/canceled":
+							toast.error("Upload Cancelled");
+							break;
+						case "storage/unknown":
+							toast.error("Path Error");
+							break;
+					}
+				},
+				() => {
+					// Upload completed successfully, now we can get the download URL
+					getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+						// console.log("file available at " + downloadURL);
+						imgLinkList.push(downloadURL);
+						setImgUploaded(false);
+						setFormData((prevState) => ({
+							...prevState,
+							imageURL: imgLinkList,
+						}));
+					});
 				}
-			},
-			(error) => {
-				switch (error.code) {
-					case "storage/unauthorized":
-						// User doesn't have permission to access the object
-						toast.error("Please Login First");
-						break;
-					case "storage/canceled":
-						toast.error("Upload Cancelled");
-						break;
-					case "storage/unknown":
-						toast.error("Path Error");
-						break;
-				}
-			},
-			() => {
-				// Upload completed successfully, now we can get the download URL
-				getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-					console.log(downloadURL);
-				});
-			}
-		);
+			);
+			setImgUploaded(true);
+		});
 	};
 
 	const handleChange = (e) => {
 		if (e.target.name === "image") {
+			let imgList = [];
+			for (let i = 0; i < e.target.files.length; i++) {
+				const newImage = e.target.files[i];
+				newImage["id"] = uuidv4();
+				imgList.push(newImage);
+			}
 			setFormData((prevState) => ({
 				...prevState,
-				imageURL: e.target.files,
+				imageURL: imgList,
 			}));
 		} else {
 			setFormData((prevState) => ({
@@ -297,6 +313,16 @@ const CreateListing = () => {
 								accept=".jpeg,.png,.jpg"
 							/>
 						</label>
+						<div className="preview flex w-2/4">
+							{imgUploaded &&
+								formData.imageURL.map((perviewImg) => {
+									<img
+										className="w-[100px]"
+										src={perviewImg}
+										alt="previewImg"
+									/>;
+								})}
+						</div>
 						{/* OFFER */}
 						<label className="input-group input-group-lg">
 							<span className="bg-secondary rounded-none w-[150px]">Offer</span>
@@ -381,6 +407,7 @@ const CreateListing = () => {
 							</div>
 						) : null}
 					</div>
+
 					{/* BUTTONS */}
 					<button type="submit" className="mt-8 text-4xl mr-4">
 						POST
