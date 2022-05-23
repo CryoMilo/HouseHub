@@ -29,7 +29,7 @@ const Offers = () => {
 			const tempListings = [];
 			const querySnapshot = await getDocs(q);
 			querySnapshot.forEach((doc) => {
-				console.log(doc.id, " => ", doc.data());
+				// console.log(doc.id, " => ", doc.data());
 				return tempListings.push({
 					id: doc.id,
 					data: doc.data(),

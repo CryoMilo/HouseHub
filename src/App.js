@@ -15,6 +15,7 @@ import PrivateRoute from "./components/PrivateRoute";
 import NotFound from "./pages/NotFound";
 import Category from "./pages/Category";
 import CreateListing from "./pages/CreateListing";
+import CreateListings from "./pages/CreateListings";
 
 function App() {
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -47,7 +48,7 @@ function App() {
 				<Route path="/category/:categoryName" element={<Category />} />
 				<Route path="/signUp" element={<SignUp />} />
 				<Route path="/forgotPassword" element={<ForgotPW />} />
-				<Route path="/createListing" element={<CreateListing />} />
+				<Route path="/createListing" element={<CreateListings />} />
 				<Route path="/*" element={<NotFound />} />
 			</Routes>
 			<Navbar />

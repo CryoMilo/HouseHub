@@ -12,6 +12,9 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { v4 as uuidv4 } from "uuid";
 import { faker } from "@faker-js/faker";
+import { doc, serverTimestamp, addDoc, collection } from "firebase/firestore";
+import { db } from "../firebase.config";
+import { async } from "@firebase/util";
 
 // import { toast } from "react-toastify";
 
@@ -21,7 +24,7 @@ const CreateListing = () => {
 	const storage = getStorage();
 	const isMounted = useRef(true);
 
-	const [type, setType] = useState("Sell");
+	const [type, setType] = useState("sell");
 	const [offerOn, setOfferOn] = useState(false);
 	const [imgUploaded, setImgUploaded] = useState(false);
 	let imgLinkList = [];
@@ -133,7 +136,23 @@ const CreateListing = () => {
 		}
 	};
 
-	const handleSubmit = (e) => {
+	const uploadData = async () => {
+		// aw   ait setDoc(doc(db, "listings"), {
+		// 	name: "Los Angeles",
+		// 	state: "CA",
+		// 	country: "USA"
+		//   });
+		const formDataCopy = {
+			...formData,
+		};
+
+		console.log(formDataCopy);
+		const docRef = await addDoc(collection(db, "listings"), formDataCopy);
+		//   console.log("Document written with ID: ", docRef.id);
+		//   console.log(docRef)
+	};
+
+	const handleSubmit = async (e) => {
 		e.preventDefault();
 		if (formData.imageURL.length > 6) {
 			toast.error("Max 6 Images");
@@ -143,14 +162,24 @@ const CreateListing = () => {
 			latitude: faker.address.latitude(90, -90, 4),
 			longitude: faker.address.longitude(90, -90, 4),
 		});
-		uploadImages(formData.imageURL);
+		const promise = new Promise(function (resolve, reject) {
+			if (imgUploaded === "true") {
+				resolve("Worked");
+			} else {
+				reject(Error("Broken"));
+			}
+		});
+
+		uploadData();
 	};
 
 	return (
 		<>
-			<div>
+			<main>
 				<header>
-					<h3 className="pageHeader">{type} Your Property</h3>
+					<h3 className="pageHeader">
+						{type.toLocaleUpperCase()} Your Property
+					</h3>
 				</header>
 				<div>{JSON.stringify(formData)}</div>
 				<form className="m-2 w-2/5 mx-auto mb-10 pb-36" onSubmit={handleSubmit}>
@@ -158,10 +187,10 @@ const CreateListing = () => {
 						<button
 							type="button"
 							className={`btn ${
-								type === "Sell" ? "btn-info" : "btn-ghost"
+								type === "sell" ? "btn-info" : "btn-ghost"
 							} mx-2 my-4 px-8`}
 							onClick={() => {
-								setType("Sell");
+								setType("sell");
 								setFormData({
 									...formData,
 									type: "sell",
@@ -172,10 +201,10 @@ const CreateListing = () => {
 						<button
 							type="button"
 							className={`btn ${
-								type === "Rent" ? "btn-info" : "btn-ghost"
+								type === "rent" ? "btn-info" : "btn-ghost"
 							} mx-2 my-4 px-8`}
 							onClick={() => {
-								setType("Rent");
+								setType("rent");
 								setFormData({
 									...formData,
 									type: "rent",
@@ -297,7 +326,7 @@ const CreateListing = () => {
 									className="input input-bordered input-box-radius border-x-8 border-black bg-white"
 								/>
 								<span className="inline pl-2 bg-transparent">
-									{type === "Rent" ? "THB/month" : "THB"}
+									{type === "rent" ? "THB/month" : "THB"}
 								</span>
 							</div>
 						</label>
@@ -400,7 +429,7 @@ const CreateListing = () => {
 											className="input input-bordered input-box-radius border-x-8 border-black bg-white"
 										/>
 										<span className="inline pl-2 bg-transparent">
-											{type === "Rent" ? "THB/month" : "THB"}
+											{type === "rent" ? "THB/month" : "THB"}
 										</span>
 									</div>
 								</label>
@@ -421,7 +450,7 @@ const CreateListing = () => {
 						CANCEL
 					</button>
 				</form>
-			</div>
+			</main>
 		</>
 	);
 };

@@ -62,6 +62,7 @@ const Category = () => {
 				<>
 					<ul>
 						{listings.map((listing) => {
+							console.log(listing.data);
 							return <ListingCard listingData={listing.data} />;
 						})}
 					</ul>
